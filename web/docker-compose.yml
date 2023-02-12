@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  web: 
+    build:
+      context: ../
+      dockerfile: ./web/Dockerfile
+      tags:
+        - redwoodjs/web:latest
+    restart: unless-stopped
+    expose:
+      - 8910
+    ports:
+      - 8910:8910
+    environment:
+      - PORT=8910
+      - API_HOST=http://api:8911
+    networks:
+      - redwood
+
+networks:
+  redwood:
+    name: redwood-network

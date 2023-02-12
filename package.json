@@ -7,18 +7,27 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/auth-dbauth-setup": "4.0.1",
-    "@redwoodjs/core": "4.0.1"
+    "@redwoodjs/auth-dbauth-setup": "4.1.2",
+    "@redwoodjs/core": "4.1.2"
+  },
+  "scripts": {
+    "docker-compose": "docker compose --file 'web/docker-compose.yml' --file 'api/docker-compose.yml' --project-name 'redwood' up --detach"
   },
   "eslintConfig": {
     "extends": "@redwoodjs/eslint-config"
   },
   "engines": {
-    "node": ">=14.17 <=16.x",
-    "yarn": ">=1.15"
+    "node": ">=14.19 <=18.x",
+    "npm": ">=6.14.16 <=8.19.3",
+    "yarn": "3.3.1"
   },
   "prisma": {
     "seed": "yarn rw exec seed"
   },
-  "packageManager": "yarn@3.3.1"
+  "packageManager": "yarn@3.3.1",
+  "volta": {
+    "node": "18.14.0",
+    "npm": "8.19.3",
+    "yarn": "3.3.1"
+  }
 }
