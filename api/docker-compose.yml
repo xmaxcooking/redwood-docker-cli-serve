@@ -6,7 +6,7 @@ services:
       context: ../
       dockerfile: ./api/Dockerfile
       tags:
-        - redwoodjs/api:latest
+        - redwood-api:latest
     restart: unless-stopped
     expose:
       - 8911

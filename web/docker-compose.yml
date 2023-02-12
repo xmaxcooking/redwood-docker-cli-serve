@@ -1,12 +1,12 @@
 version: '3.9'
 
 services:
-  web: 
+  web:
     build:
       context: ../
       dockerfile: ./web/Dockerfile
       tags:
-        - redwoodjs/web:latest
+        - redwood-web:latest
     restart: unless-stopped
     expose:
       - 8910
