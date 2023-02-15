@@ -2,21 +2,22 @@ version: '3.9'
 
 services:
   api:
-    build:
-      context: ../
-      dockerfile: ./api/Dockerfile
-      tags:
-        - redwood-api:latest
+    image: node:18.14.0
+    volumes:
+      - ../:/usr/local/app
+      - api-packages:/usr/local/app/node_modules
+    command: bash -c "cd /usr/local/app && yarn install && yarn rw prisma migrate dev && yarn rw dev api"
+    working_dir: /usr/local/app
     restart: unless-stopped
     expose:
       - 8911
     ports:
       - 8911:8911
-    environment:
-      - PORT=8911
-      - DATABASE_URL=file:./dev.db
     networks:
       - redwood
+
+volumes:
+  api-packages:
 
 networks:
   redwood:
