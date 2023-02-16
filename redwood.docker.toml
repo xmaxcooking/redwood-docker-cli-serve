@@ -7,7 +7,7 @@
 
 [web]
   port = 8910
-  apiUrl = "/.netlify/functions"
+  apiUrl = "/api"
   title = "Redwood Tutorial Blog"
 [api]
   port = 8911

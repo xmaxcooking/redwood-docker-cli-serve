@@ -1,0 +1,89 @@
+version: '3.9'
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:latest
+    volumes:
+      #- 'C:/Docker/nginx/certs:/etc/nginx/certs'
+      #- 'C:/Docker/nginx/vhost:/etc/nginx/vhost.d'
+      #- 'C:/Docker/nginx/html:/usr/share/nginx/html'
+      #- 'C:/Docker/nginx/proxy.conf:/etc/nginx/proxy.conf'
+      - '/var/run/docker.sock:/tmp/docker.sock:ro'
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      - ENABLE_IPV6=true
+    networks:
+      - internal
+      - external
+    restart: 'unless-stopped'
+
+  db:
+    image: postgres:latest
+    #volumes:
+    #  - C:/Docker/postgres/dev:/var/lib/postgresql/data
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=Redwood
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d Redwood -U admin']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: ./api/Dockerfile
+      tags:
+        - redwood-api:latest
+    expose:
+      - 8911
+    environment:
+      - PORT=8911
+      - DATABASE_URL=postgres://admin:admin@db:5432/Redwood
+      # nginx-proxy settings
+      - ROOT_PATH=/api
+      - VIRTUAL_HOST=dev.localhost
+      - VIRTUAL_PATH=/api
+      - VIRTUAL_PORT=8911
+    networks:
+      - internal
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./
+      dockerfile: ./web/Dockerfile
+      tags:
+        - redwood-web:latest
+    depends_on:
+      - api
+    expose:
+      - 8910
+    environment:
+      - PORT=8910
+      - API_HOST=http://dev.localhost/api
+      # nginx-proxy settings
+      - VIRTUAL_HOST=dev.localhost
+      - VIRTUAL_PATH=/
+      - VIRTUAL_PORT=8910
+    networks:
+      - internal
+    restart: unless-stopped
+
+networks:
+  internal:
+    name: internal-network
+  external:
+    name: external-network
