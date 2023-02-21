@@ -1,23 +1,24 @@
 version: '3.9'
 
 services:
-  web:
+  redwood:
     image: node:18.14.0
     volumes:
-      - ../:/usr/local/app
-      - web-packages:/usr/local/app/node_modules
-    command: bash -c "cd /usr/local/app && yarn install && yarn rw dev web"
+      - type: bind
+        source: .
+        target: /usr/local/app
+      - unbound:/usr/local/app/node_modules
     working_dir: /usr/local/app
+    command: bash -c "yarn install && yarn rw dev"
     restart: unless-stopped
-    expose:
-      - 8910
     ports:
       - 8910:8910
+      - 8911:8911
     networks:
       - redwood
 
 volumes:
-  web-packages:
+  unbound:
 
 networks:
   redwood:
